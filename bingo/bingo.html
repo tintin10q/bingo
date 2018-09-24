@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body onload="startGame()">
+    
+    <canvas id="myCanvas" width="450" height="625"></canvas>
+
+    <img id="scoreboard" width="10" height="0" src="bingo_lijst.png">
+
+    <div class="button_list">
+        <ul>
+            <li><button onclick="go()">Trek een bal</button><li>
+            <li><button onclick="bingo_list.reset()">Reset de game</button></li>
+    <br>
+    <li id="text_wit"><input  onclick="switch_ball_color('ball_wit')" type="radio" name="kleur" value=" Wit"/> Wit </li>
+  <li id="text_rood"><input onclick="switch_ball_color('ball_rood')" type="radio" name="kleur" value="Rood"/> Rood </li>
+  <li id="text_groen"><input  onclick="switch_ball_color('ball_groen')" type="radio" name="kleur" value="Groen"/> Groen</li>
+  <li id="text_geel"><input  type="radio" name="kleur" value="Geel" onclick="switch_ball_color('ball_geel')"/> Geel</li>
+  <li id="text_blauw"><input  type="radio" name="kleur" value="Blauw" onclick="switch_ball_color('ball_blauw')"/> Blauw</li>
+            </ul> 
+        </div>
+    <img id="ball_rood"  width="10" height="0" src="ball_red.png" alt="The Screama">
+    <img id="ball_geel" width="10" height="0" src="ball_yellow.png" alt="The Screamb">
+    <img id="ball_blauw" width="10" height="0" src="ball_blue.png" alt="The Screamc">
+    <img id="ball_wit" width="10" height="0" src="ball_white.png" alt="The Screamd">
+    <img id="ball_groen" width="10" height="0" src="ball_green.png" alt="The Screame">
+    
+    <script>
+var myGamePiece;
+var counter = 200;
+var ball_color = "ball_geel";
+
+function startGame() {
+	ball = new component(ball_color, 250, 624, 0);
+	bingo_list = new scoreboard("scoreboard", 0, 0)
+	myGameArea.start();
+	updateGameAreaOnce()
+}
+
+var myGameArea = {
+	canvas: document.getElementById("myCanvas"),
+	start: function () {
+		this.context = this.canvas.getContext("2d");
+		this.interval = setInterval(updateGameArea, 20);
+	},
+	clear: function () {
+		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+}
+
+
+function component(img_name, x, y, number) {
+	this.x = x;
+	this.y = y;
+	this.number = number;
+	this.img = document.getElementById(img_name);
+	this.update = function () {
+		ctx = myGameArea.context;
+		ctx.font = "50px Arial";
+		ctx.drawImage(this.img, this.x, this.y);
+		ctx.fillText(this.number, this.x + 87, this.y + 105);
+	}
+
+}
+
+function switch_ball_color(color) {
+	ball_color = color;
+}
+
+function scoreboard(img_name, x, y) {
+	this.x = x;
+	this.y = y;
+	this.img = document.getElementById("scoreboard");
+	this.number_list = [];
+	this.number_draw_list = [];
+	var i = 1;
+	for (i; i < 76; i++) {
+		this.number_list.push(new bingo_number(i));
+		this.number_draw_list.push(new bingo_number(i));
+	}
+	this.reset = function () {
+		this.number_list = [];
+		this.number_draw_list = [];
+		var i = 1;
+		for (i; i < 76; i++) {
+			this.number_list.push(new bingo_number(i));
+			this.number_draw_list.push(new bingo_number(i));
+		}
+		updateGameAreaOnce();
+	}
+	this.update = function () {
+		this.ofzetX = 28;
+		this.ofzetY = 70;
+		this.ofzet_plus = 41;
+		this.ofzetIncrease = 0;
+		ctx = myGameArea.context;
+		ctx.textAlign = "center";
+		ctx.font = "20px Arial";
+		ctx.drawImage(this.img, this.x, this.y);
+		var pick;
+		for (pick of this.number_draw_list) {
+			ctx.fillStyle = pick.color;
+			ctx.fillText(String(pick.number), this.x + this.ofzetX, this.y + this.ofzetY);
+			this.ofzetX += this.ofzet_plus;
+			this.ofzetIncrease += 1
+			if (this.ofzetIncrease > 4) {
+				this.ofzetIncrease = 0;
+				this.ofzetX -= this.ofzet_plus * 5;
+				this.ofzetY += 38;
+				if (pick.number == 25) {
+					this.ofzetY += 5;
+				}
+			}
+		}
+	}
+}
+
+function bingo_number(number) {
+	this.number = number;
+	this.font = "10px Arial"
+	this.color = "blue";
+}
+
+
+function updateGameArea() {
+
+	if (counter < 115) {
+		counter++;
+		ball.y -= 5;
+		myGameArea.clear();
+		bingo_list.update();
+		ball.update();
+	}
+}
+
+function updateGameAreaOnce() {
+
+	myGameArea.clear();
+	bingo_list.update();
+	ball.update();
+}
+
+function go() {
+	var pick = bingo_list.number_list.random();
+	console.log("Numbers to go:", bingo_list.number_list.length, " -  nummer gepakt:", pick.number);
+	bingo_list.number_draw_list[pick.number - 1].color = "red";
+	bingo_list.number_list.removeItem(pick);
+	ball = new component(ball_color, 250, 624, pick.number);
+	counter = 0
+}
+
+Array.prototype.random = function () {
+	return this[getRndInteger(0, this.length)];
+}
+
+Array.prototype.removeItem = function (item) {
+	for (var i = this.length - 1; i >= 0; i--) {
+		if (this[i] === item) {
+			this.splice(i, 1);
+		}
+	}
+	return this;
+}
+
+function getRndInteger(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+</script>
+</body>
+</html>
