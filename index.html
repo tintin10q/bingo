@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
  <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Bingo</title>
 </head>
 <body onload="startGame()">
     
     <canvas id="myCanvas" width="450" height="625"></canvas>
 
-    <img id="scoreboard" width="10" height="0" src="bingo_lijst.png">
+    <img id="scoreboard" width="10" height="0" src="bingo_lijst.png" alt="Bingo Scoreboard"/>
 
     <div class="button_list">
         <ul>
@@ -29,13 +30,11 @@
     <img id="ball_groen" width="10" height="0" src="ball_green.png" alt="The Screame">
     <div class="feet">
         Made by Quinten Cabo (tintin10q@hotmail.com)
-        <br>
-        © 2018. All rights reserved.
 </div>
     <script>
 var myGamePiece;
 var counter = 200;
-var ball_color = "ball_geel";
+var ball_color = "ball_blauw";
 
 function startGame() {
 	ball = new component(ball_color, 250, 624, 0);
