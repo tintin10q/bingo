@@ -16,7 +16,7 @@ canvas {
 }
 
 html {
-    background: url(https://i.imgur.com/GWAhfv3.jpg);   
+    background: radial-gradient(circle, #2e2e2e 0%, #000000 100%);
 }
 
 
